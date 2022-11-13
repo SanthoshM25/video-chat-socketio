@@ -15,9 +15,11 @@ function App() {
   const [idToCall, setIdToCall] = useState("");
   const [callEnded, setCallEnded] = useState(false);
   const [name, setName] = useState("");
+  const [editorValue, setEditorValue] = useState("");
   const myVideo = useRef();
   const userVideo = useRef();
   const connectionRef = useRef();
+  const editorRef = useRef();
 
   useEffect(() => {
     navigator.mediaDevices
@@ -36,6 +38,14 @@ function App() {
       setCaller(data.from);
       setName(data.name);
       setCallerSignal(data.signal);
+    });
+    editorRef.current.addEventListener("keyup", (evt) => {
+      const text = editorRef.current.value;
+      socket.send(text);
+    });
+    socket.on("message", (data) => {
+      setEditorValue(data);
+      editorRef.current.value = data;
     });
   }, []);
 
@@ -101,6 +111,13 @@ function App() {
             ) : null}
           </div>
         </div>
+        <input
+          type="text"
+          label="editor"
+          value={editorValue}
+          ref={editorRef}
+          onChange={(e) => setEditorValue(e.target.value)}
+        />
         <div>
           <input
             type="text"

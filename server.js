@@ -24,6 +24,10 @@ io.on("connection", (socket) => {
   socket.on("answerCall", (data) =>
     io.to(data.to).emit("callAccepted", data.signal)
   );
+  socket.on("message", (evt) => {
+    console.log(evt);
+    socket.broadcast.emit("message", evt);
+  });
 });
 
 server.listen(5000, () => console.log("Server is running on port 5000"));
